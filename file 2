@@ -1,0 +1,77 @@
+no6
+select 
+eu.unique_id as unique_id, e.name as name
+from Employees e left join 
+EmployeeUNI eu on e.id = eu.id
+
+no7
+SELECT P.product_name ,S.year  ,S.price 
+FROM Sales  S
+LEFT JOIN Product P
+ON S.product_id =P.product_id
+
+no8
+SELECT v.customer_id, COUNT(v.visit_id) AS count_no_trans FROM Visits v
+LEFT JOIN Transactions t ON v.visit_id = t.visit_id
+WHERE t.transaction_id IS NULL
+GROUP BY v.customer_id
+
+no9
+SELECT 
+w2.id
+FROM 
+    Weather w1
+JOIN 
+    Weather w2
+ON 
+    DATEDIFF(day,w1.recordDate, w2.recordDate) = 1
+WHERE 
+    w2.temperature > w1.temperature;
+    
+    no10
+    select a1.machine_id
+, ROUND(AVG(a2.timestamp - a1.timestamp),3) as processing_time
+from Activity a1
+join Activity a2
+on a1.process_id=a2.process_id
+and a1.machine_id=a2.machine_id
+and a1.timestamp<a2.timestamp
+group by a1.machine_id;
+
+no11
+SELECT Employee.name,Bonus.bonus FROM Employee 
+LEFT JOIN Bonus ON Employee.empID = Bonus.empID
+WHERE bonus < 1000 OR Bonus IS NULL ;
+
+no12
+Select 
+  student.student_id, 
+  student.student_name,
+  subject.subject_name,
+  count(exam.subject_name) as attended_exams
+from Students student
+join Subjects subject
+left join Examinations exam
+on student.student_id = exam.student_id 
+  and subject.subject_name = exam.subject_name
+group by student.student_id, subject.subject_name
+order by student.student_id, subject.subject_name;
+
+no13
+Select m.name
+from employee as e
+inner join employee as m
+on e.managerId=m.id
+group by e.managerId 
+having count(e.id)>=5
+
+no14
+SELECT s.user_id, 
+  ROUND(AVG(IF(c.action='confirmed',1,0)),2) as confirmation_rate 
+FROM Signups s
+LEFT JOIN Confirmations c using (user_id)
+GROUP BY s.user_i
+
+
+
+    
