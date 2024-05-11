@@ -1,0 +1,126 @@
+no15
+SELECT *
+FROM Cinema
+WHERE mod(id,2) = 1 
+    AND description != 'boring'
+ORDER BY rating DESC
+
+no16
+select 
+p.product_id,
+ifnull(round(sum(units * price) / sum(units),2),0) as average_price
+from
+Prices p left join UnitsSold u
+on p.product_id = u.product_id and u.purchase_date between start_date and end_date
+group by product_id;
+
+no17
+SELECT 
+    p.project_id,
+    ROUND(AVG(e.experience_years), 2) AS average_years
+FROM
+    Project p 
+    INNER JOIN Employee e ON e.employee_id = p.employee_id
+GROUP BY p.project_id;
+
+no18
+select contest_id , round (count(distinct user_id )*100/(select count( user_id )from Users ),2)as percentage 
+from Register 
+group by contest_id 
+order by percentage desc,contest_id
+
+no19
+SELECT query_name, 
+ROUND(SUM(rating/position) / COUNT(*), 2) AS quality,
+ROUND(SUM(CASE WHEN rating < 3 THEN 1 ELSE 0 END) * 100.0 / COUNT(*), 2) AS poor_query_percentage
+FROM Queries 
+GROUP BY 
+query_name;
+
+no20
+SELECT LEFT(trans_date, 7) AS month, country,
+COUNT(*) AS trans_count,
+SUM(IF(state = 'approved', 1, 0)) AS approved_count, 
+SUM(amount) AS trans_total_amount,
+SUM(IF(state = 'approved', amount, 0)) AS approved_total_amount
+FROM Transactions
+GROUP BY month, country;
+
+no21
+Select 
+    round(avg(order_date = customer_pref_delivery_date)*100, 2) as immediate_percentage
+from Delivery
+where (customer_id, order_date) in (
+  Select customer_id, min(order_date) 
+  from Delivery
+  group by customer_id
+);
+
+no22
+SELECT ROUND(COUNT(A2.player_id) / COUNT(A1.player_id), 2) 
+
+As fraction FROM Activity A1 LEFT OUTER JOIN Activity A2 ON 
+
+A2.player_id = A1.player_id AND A2.event_date = A1.event_date + 1 
+
+WHERE (A1.player_id, A1.event_date) IN (SELECT player_id, 
+
+MIN(event_date) FROM Activity GROUP BY player_id )
+
+no23
+select teacher_id , 
+count(distinct subject_id) as cnt 
+from teacher group by teacher_id;
+
+no24
+SELECT activity_date AS day, 
+COUNT(DISTINCT user_id) AS active_users 
+FROM Activity 
+WHERE 
+activity_date >= '2019-06-28' AND activity_date <= '2019-07-27' 
+GROUP BY activity_date;
+
+no25
+SELECT product_id, year AS first_year, quantity, price 
+FROM sales
+WHERE (product_id, year) IN (
+    SELECT product_id, MIN(year) 
+    FROM sales 
+    GROUP BY product_id
+);
+
+no26
+select class from 
+group by class having 
+count(distinct student) >= 5;
+
+no27
+SELECT DISTINCT user_id , count(distinct follower_id) AS followers_count
+FROM followers
+GROUP BY user_id
+
+no28
+SELECT MAX(num) AS num
+FROM (
+    SELECT num
+    FROM MyNumbers
+    GROUP BY num
+    HAVING COUNT(num) = 1
+) AS unique_numbers;
+
+no29
+SELECT  customer_id FROM 
+Customer GROUP BY customer_id
+HAVING 
+COUNT(distinct product_key) = (SELECT COUNT(product_key)
+FROM Product)
+
+no30
+SELECT 
+  e1.employee_id, 
+  e1.name, 
+  COUNT(e2.reports_to) AS reports_count, 
+  ROUND(AVG(e2.age)) AS average_age 
+FROM Employees e1 JOIN Employees e2 ON e1.employee_id = e2.reports_to
+GROUP BY e2.reports_to
+ORDER BY e1.employee_id;
