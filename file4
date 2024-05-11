@@ -1,0 +1,121 @@
+no31
+SELECT employee_id, department_id
+FROM Employee 
+WHERE primary_flag = 'Y'
+UNION
+SELECT employee_id, department_id
+FROM Employee 
+GROUP BY employee_id
+HAVING COUNT(employee_id) = 1
+ORDER BY employee_id;
+
+no32
+SELECT x,y,z
+    ,CASE
+        WHEN x+y<=z OR x+z<=y OR y+z<=x THEN 'No'
+        ELSE 'Yes'
+    END AS triangle
+FROM triangle
+
+no33
+select distinct num as ConsecutiveNums from Logs where (id+1,num) in (select * from logs) and (id+2,num) in (select * from logs)
+
+
+no34
+SELECT
+    product_id,
+    FIRST_VALUE(new_price) OVER (PARTITION BY product_id ORDER BY change_date DESC) AS price
+FROM Products
+WHERE change_date <= '2019-08-16'
+UNION
+SELECT
+    product_id,
+    10 AS price
+FROM Products
+GROUP BY product_id
+HAVING MIN(change_date) > '2019-08-16'
+
+
+no35
+(select *,sum(weight) over (order by turn) AS cum
+FROM queue) p1
+
+no36
+SELECT 
+    'Low Salary' AS category,
+    SUM(income < 20000) AS accounts_count
+FROM 
+    Accounts
+
+UNION 
+
+    SELECT 
+        'Average Salary' AS category,
+        SUM(income BETWEEN 20000 AND 50000 ) AS accounts_count
+    FROM 
+        Accounts
+
+UNION
+
+    SELECT 
+        'High Salary' AS category,
+        SUM(income > 50000) AS accounts_count
+    FROM 
+        Accounts;
+
+
+no37
+SELECT employee_id
+FROM Employees
+WHERE salary < 30000
+AND manager_id NOT IN (
+  SELECT employee_id FROM Employees
+)
+ORDER BY employee_id;
+
+no38
+SELECT 
+    CASE 
+        WHEN id = (SELECT MAX(id) FROM seat) AND id % 2 = 1
+            THEN id 
+        WHEN id % 2 = 1
+            THEN id + 1
+        ELSE id - 1
+    END AS id,
+    student
+FROM seat
+ORDER BY id
+
+
+no39
+(SELECT name AS results
+FROM MovieRating JOIN Users USING(user_id)
+GROUP BY name
+ORDER BY COUNT(*) DESC, name
+LIMIT 1)
+
+UNION ALL
+
+(SELECT title AS results
+FROM MovieRating JOIN Movies USING(movie_id)
+WHERE EXTRACT(YEAR_MONTH FROM created_at) = 202002
+GROUP BY title
+ORDER BY AVG(rating) DESC, title
+LIMIT 1);
+
+no40
+SELECT visited_on,
+amount + amount1 + amount2 + amount3 + amount4 + amount5 + amount6 AS amount,
+ROUND((amount + amount1 + amount2 + amount3 + amount4 + amount5 + amount6)/7,2) AS average_amount
+FROM(SELECT visited_on,amount,
+  lag(amount, 1) over() AS amount1,
+  lag(amount, 2) over() AS amount2,
+  lag(amount, 3) over() AS amount3,
+  lag(amount, 4) over() AS amount4,
+  lag(amount, 5) over() AS amount5,
+  lag(amount, 6) over() AS amount6
+  FROM (SELECT visited_on, SUM(amount) AS amount FROM Customer GROUP BY 1) AS temp2
+  GROUP BY 1) AS temp
+GROUP BY 1
+HAVING visited_on >= date_add((SELECT visited_on FROM Customer LIMIT 1), INTERVAL 6 day)
+ORDER BY 1;
