@@ -1,0 +1,78 @@
+no41
+with cte as 
+(select requester_id as id
+from requestaccepted
+union all
+select accepter_id
+from requestaccepted
+)
+
+select id, count(*) as num
+from cte
+group by id
+order by num desc
+limit 1
+
+no42
+select round(sum(tiv_2016),2) tiv_2016
+from Insurance
+where tiv_2015 in (select tiv_2015
+                   from Insurance
+                   group by tiv_2015
+                   having count(*) > 1) and (lat,lon) in (select lat, lon
+    from Insurance
+   group by lat,lon
+   having count(*) <= 1);
+
+no43
+select  Department, Employee, salary from (     select     dept.name as Department,      emp.name as Employee,     salary,     dense_rank() over(partition by dept.name order by salary desc) rate     from Employee emp     join Department dept     on emp.departmentid = dept.id )t1 where rate <= 3
+
+no44
+SELECT user_id, 
+       CONCAT(UPPER(SUBSTRING(name, 1, 1)), LOWER(SUBSTRING(name, 2))) as name
+FROM Users
+ORDER BY user_id;
+
+no45
+select user_id, CONCAT(UPPER(LEFT(name,1)), LOWER(RIGHT(name,LEN(name)-1))) name 
+from Users 
+ patient_id, patient_name, conditions
+from patients
+where conditions like '%_% DIAB1%'
+    or conditions like 'DIAB1%'
+
+no46
+delete p1
+from Person p1
+JOIN Person p2 on p1.email = p2.email
+where p1.email = p2.email
+and p1.id>p2.id;
+
+no47
+SELECT (SELECT DISTINCT SALARY FROM EMPLOYEE 
+ORDER BY SALARY DESC
+OFFSET 1 LIMIT 1) AS SecondHighestSalary;
+
+no48
+SELECT sell_date,
+    COUNT(DISTINCT product) AS num_sold,
+    GROUP_CONCAT(DISTINCT product) AS products
+FROM Activities
+GROUP BY sell_date
+ORDER BY sell_date
+
+no49
+SELECT p.product_name, SUM(o.unit) AS unit
+FROM Products p
+JOIN Orders o ON p.product_id = o.product_id
+WHERE o.order_date BETWEEN '2020-02-01' AND '2020-02-29'
+GROUP BY p.product_id
+HAVING unit >= 100;
+
+no50
+SELECT
+  *
+FROM
+  Users
+WHERE
+  mail REGEXP '^[a-zA-Z][a-zA-Z0-9_.-]*@leetcode[.]com$';
